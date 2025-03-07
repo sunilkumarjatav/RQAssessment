@@ -1,0 +1,12 @@
+plugins {
+    id 'project-conventions'
+}
+
+dependencies {
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation group: 'io.rest-assured', name: 'spring-mock-mvc', version: '3.0.0'
+}
+
+springBoot {
+    mainClass = 'com.reliaquest.api.ApiApplication'
+}

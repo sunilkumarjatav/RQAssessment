@@ -1,0 +1,3 @@
+rootProject.name = 'rqChallenge'
+include 'server'
+include 'api'
