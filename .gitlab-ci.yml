@@ -1,0 +1,16 @@
+image: registry.gitlab.com/rqinnovations/greymatter/devops/images/java:17.0.2_8-jdk-aws
+
+stages:
+  - build
+
+build:
+  stage: build
+  tags:
+    - RQD-CI-K8s
+  script:
+    - ./gradlew build -x test
+  artifacts:
+    paths:
+      - "*/build/libs/"
+    expire_in: 1 hour
+  interruptible: true
