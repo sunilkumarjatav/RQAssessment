@@ -9,11 +9,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -33,7 +31,7 @@ class ApiApplicationTest {
     }
 
     @Test
-    public void testGetAllEmployees() throws Exception { //Sunil
+    public void testGetAllEmployees() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/employee"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -44,56 +42,41 @@ class ApiApplicationTest {
     }
 
     @Test
-    public void testGetEmployeesByNameSearch() throws Exception { //Sunil
-        MvcResult result = mockMvc.perform(get("/api/v1/employee/search/Emmanuel"))
+    public void testGetEmployeesByNameSearch() throws Exception {
+        MvcResult result = mockMvc.perform(get("/api/v1/employee/search/Walton"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
         String responseContent = result.getResponse().getContentAsString();
-        assertThat(responseContent).contains("Emmanuel Brakus");
+        assertThat(responseContent).contains("Walton");
     }
 
     @Test
-    public void testGetEmployeeById() throws Exception {//Sunil
-        MvcResult result = mockMvc.perform(get("/api/v1/employee/79a983b8-270b-43c1-8bb3-f532467afdf8"))
+    public void testGetEmployeeById() throws Exception {
+        MvcResult result = mockMvc.perform(get("/api/v1/employee/dea0bf84-ed20-4805-b09d-19f2cdb3cdec"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
         String responseContent = result.getResponse().getContentAsString();
-        assertThat(responseContent).contains("Emmanuel Brakus");
+        assertThat(responseContent).contains("Walton");
     }
 
     @Test
-    public void testGetHighestSalaryOfEmployees() throws Exception { //Sunil
+    public void testGetHighestSalaryOfEmployees() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/employee/highestSalary"))
                 .andExpect(status().isOk())
                 .andReturn();
 
         String responseContent = result.getResponse().getContentAsString();
-        assertThat(responseContent).isEqualTo("492902");
+        assertThat(responseContent).isEqualTo("702730");
     }
 
     @Test
-    public void testGetTop10HighestEarningEmployeeNames() throws Exception { //Sunil
+    public void testGetTop10HighestEarningEmployeeNames() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/employee/topTenHighestEarningEmployeeNames"))
                 .andExpect(status().isOk())
-                .andReturn();
-
-        String responseContent = result.getResponse().getContentAsString();
-        assertThat(responseContent).contains("Emmanuel Brakus");
-    }
-
-    @Test
-    public void testCreateEmployee() throws Exception {
-        String employeeJson = Files.readString(Paths.get("src/test/resources/employee.json"), StandardCharsets.UTF_8);
-
-        // Perform POST request
-        MvcResult result = mockMvc.perform(post("/api/v1/employee")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(employeeJson))
-                .andExpect(status().isCreated())
                 .andReturn();
 
         String responseContent = result.getResponse().getContentAsString();
@@ -101,12 +84,26 @@ class ApiApplicationTest {
     }
 
     @Test
+    public void testCreateEmployee() throws Exception {
+        String employeeJson = Files.readString(Paths.get("src/test/resources/employee.json"), StandardCharsets.UTF_8);
+
+        MvcResult result = mockMvc.perform(post("/api/v1/employee")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(employeeJson))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        String responseContent = result.getResponse().getContentAsString();
+        assertThat(responseContent).contains("Veena");
+    }
+
+    @Test
     public void testDeleteEmployeeById() throws Exception {
-        MvcResult result = mockMvc.perform(delete("/api/v1/employee/79a983b8-270b-43c1-8bb3-f532467afdf8"))
+        MvcResult result = mockMvc.perform(delete("/api/v1/employee/dea0bf84-ed20-4805-b09d-19f2cdb3cdec"))
                 .andExpect(status().isOk())
                 .andReturn();
 
         String responseContent = result.getResponse().getContentAsString();
-        assertThat(responseContent).isEqualTo("Emmanuel Brakus");
+        assertThat(responseContent).isEqualTo("Walton");
     }
 }

@@ -1,18 +1,28 @@
 package com.reliaquest.api.model;
 
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 public class Employee {
-
     private String id;
-    private String Name;
-    private Integer salary;
-    private Integer age;
+
+    @JsonProperty("employee_name")
+    private String name;
+
+    @JsonProperty("employee_salary")
+    private int salary;
+
+    @JsonProperty("employee_age")
+    private int age;
+
+    @JsonProperty("employee_title")
     private String title;
+
+    @JsonProperty("employee_email")
     private String email;
 
     @Override

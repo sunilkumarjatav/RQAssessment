@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation group: 'io.rest-assured', name: 'spring-mock-mvc', version: '3.0.0'
 }

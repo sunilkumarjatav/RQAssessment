@@ -1,8 +1,7 @@
 {
-  "id": "79a983b8-270b-43c1-8bb3-f532467afdf9",
-  "employee_name": "Sunil Kumar",
-  "employee_salary": 702730,
-  "employee_age": 28,
-  "employee_title": "Software Engineer",
-  "employee_email": "jatavsunil2117@gmail.com"
+  "name": "Veena Hind 1",
+  "salary": 352730,
+  "age": 25,
+  "title": "Software Engineer 2",
+  "email": "veenahind1994@gmail.com"
 }

@@ -1,38 +1,32 @@
 package com.reliaquest.api.service;
 
-import com.reliaquest.api.client.RestApiClient;
+import com.reliaquest.api.client.EmployeeApiClient;
 import com.reliaquest.api.model.Employee;
 import com.reliaquest.api.model.EmployeeDTO;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmployeeService {
+public class EmployeeService implements IEmployeeService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
-
-    private final RestApiClient restApiClient;
+    private final EmployeeApiClient restApiClient;
 
     @Autowired
-    public EmployeeService(RestApiClient restApiClient) {
+    public EmployeeService(EmployeeApiClient restApiClient) {
         this.restApiClient = restApiClient;
-        logger.info("EmployeeService constructor called");
     }
 
+    @Override
     public List<Employee> getAllEmployees() {
-        List<EmployeeDTO> employeeDTOs = restApiClient.getEmployeeList("");
-        if (employeeDTOs != null) {
-            return employeeDTOs.stream().map(this::mapDtoToEmployee).collect(Collectors.toList());
-        }
-        return Collections.emptyList();
+        return restApiClient.getEmployees("");
     }
 
+    @Override
     public List<Employee> getEmployeesByNameSearch(String searchString) {
         List<Employee> allEmployees = getAllEmployees();
         if (allEmployees == null) {
@@ -43,15 +37,13 @@ public class EmployeeService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public Employee getEmployeeById(String id) {
-        EmployeeDTO employeeDTO = restApiClient.getEmployee("/" + id);
-        if (employeeDTO != null) {
-            return mapDtoToEmployee(employeeDTO);
-        }
-        return null;
+        return restApiClient.getEmployee("/" + id);
     }
 
-    public int getHighestSalaryOfEmployees() {
+    @Override
+    public Integer getHighestSalaryOfEmployees() {
         List<Employee> allEmployees = getAllEmployees();
         if (allEmployees == null) {
             return 0;
@@ -62,6 +54,7 @@ public class EmployeeService {
                 .orElse(0);
     }
 
+    @Override
     public List<String> getTop10HighestEarningEmployeeNames() {
         List<Employee> allEmployees = getAllEmployees();
         if (allEmployees == null) {
@@ -74,31 +67,20 @@ public class EmployeeService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public Employee createEmployee(EmployeeDTO employeeInput) {
-        EmployeeDTO employeeDTO = restApiClient.createEmployee("", employeeInput);
-        if (employeeDTO != null) {
-            return mapDtoToEmployee(employeeDTO);
-        }
-        return null;
+        employeeInput.setId(UUID.randomUUID().toString());
+        return restApiClient.createEmployee("", employeeInput);
     }
 
+    @Override
     public String deleteEmployeeById(String id) {
         Employee employee = getEmployeeById(id);
         if (employee == null) {
             return null;
         }
-        restApiClient.deleteEmployee("/" + id);
-        return employee.getName();
+        Employee deletedEmployee = restApiClient.deleteEmployee("/" + id);
+        return deletedEmployee != null ? deletedEmployee.getName() : null;
     }
 
-    private Employee mapDtoToEmployee(EmployeeDTO dto) {
-        Employee employee = new Employee();
-        employee.setId(dto.getId());
-        employee.setName(dto.getEmployee_name());
-        employee.setSalary(dto.getEmployee_salary());
-        employee.setAge(dto.getEmployee_age());
-        employee.setTitle(dto.getEmployee_title());
-        employee.setEmail(dto.getEmployee_email());
-        return employee;
-    }
 }

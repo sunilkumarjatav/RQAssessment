@@ -7,13 +7,13 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EmployeeResponse {
     @JsonProperty("data")
-    private List<EmployeeDTO> data;
+    private List<Employee> data;
 
-    public List<EmployeeDTO> getData() {
+    public List<Employee> getData() {
         return data;
     }
 
-    public void setData(List<EmployeeDTO> data) {
+    public void setData(List<Employee> data) {
         this.data = data;
     }
 }

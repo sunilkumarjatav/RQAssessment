@@ -1,5 +1,7 @@
 package com.reliaquest.api.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reliaquest.api.model.Employee;
 import com.reliaquest.api.model.EmployeeDTO;
 import com.reliaquest.api.service.EmployeeService;
@@ -13,14 +15,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/employee")
-public class EmployeeController implements IEmployeeController<Employee, EmployeeDTO> {
+public class EmployeeController implements IEmployeeController<Employee, String> {
 
     private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
+    private final ObjectMapper objectMapper;
     private final EmployeeService employeeService;
 
     @Autowired
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -55,7 +59,7 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
     @GetMapping("/highestSalary")
     public ResponseEntity<Integer> getHighestSalaryOfEmployees() {
         logger.info("Fetching highest salary.");
-        int highestSalary = employeeService.getHighestSalaryOfEmployees();
+        Integer highestSalary = employeeService.getHighestSalaryOfEmployees();
         return ResponseEntity.ok(highestSalary);
     }
 
@@ -68,12 +72,13 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
     }
 
     @Override
-    public ResponseEntity<Employee> createEmployee(@RequestBody EmployeeDTO employeeInput) {
+    public ResponseEntity<Employee> createEmployee(@RequestBody String employeeInput) {
         logger.info("Creating employee: {}", employeeInput);
         try {
-            Employee createdEmployee = employeeService.createEmployee(employeeInput);
+            EmployeeDTO employeeDTO = objectMapper.readValue(employeeInput, EmployeeDTO.class);
+            Employee createdEmployee = employeeService.createEmployee(employeeDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdEmployee);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | JsonProcessingException e) {
             logger.error("Invalid employee input: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
